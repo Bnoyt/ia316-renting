@@ -5,9 +5,9 @@ Project for IA316
 
  - [x] Coding a first reasonable environnement
  - [x] Coding random agent
- - [] Improve random agent
- - [] First smart agent with matrix factorization
- - [] Add public features to users
- - [] Deep learning environnement with embedding
- - [] Deep q learning ?
- - [] ...
+ - [ ] Improve random agent
+ - [ ] First smart agent with matrix factorization
+ - [ ] Add public features to users
+ - [ ] Deep learning environnement with embedding
+ - [ ] Deep q learning ?
+ - [ ] ...
