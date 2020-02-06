@@ -22,13 +22,13 @@ class Environnement(object):
         
         self.rng = np.random.RandomState(seed)
         
-        
+        price_expectation = self.rng.uniform(2000)
         
         
         self.clusters = [np.array([self.rng.uniform() for i in range(self.dim)]) for j in range(self.n_clusters)]
         
         
-        self.peoples = [Person.randomPerson(s*self.seed,self.dim,self.clusters,s) for s in range(self.n_users)]
+        self.peoples = [Person.randomPerson(s*self.seed,self.dim,self.clusters,s,price_expectation) for s in range(self.n_users)]
         
         
         
@@ -49,7 +49,9 @@ class Environnement(object):
             "bike_proposed",
             "price_proposed",
             "days_proposed",
-            "answer"
+            "answer",
+            "reward",
+            "best_reward"
         ])
         
         

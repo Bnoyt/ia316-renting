@@ -25,7 +25,7 @@ class Person(object):
     
     
     @classmethod
-    def randomPerson(cls,seed,dim,clusters,user_id):
+    def randomPerson(cls,seed,dim,clusters,user_id,price_expectation):
         rng = np.random.RandomState(seed)
         
         n = len(clusters)
@@ -35,14 +35,11 @@ class Person(object):
         
         params = np.array([max(0,rng.normal(s,1)) for s in c])
         
-        price_appetence = rng.uniform(1000)
+        price_appetence = rng.uniform(price_expectation)
         
         
         return cls(params,price_appetence,seed,user_id)
         
-        
-    def get_best_reward(self):
-        pass
         
     def get_proba(self,bike,price,days,days_wanted):
         

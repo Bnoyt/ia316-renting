@@ -3,6 +3,7 @@ import numpy as np
 import random
 from tqdm import tqdm
 import matplotlib.pyplot as plt
+pd.options.mode.chained_assignment = None  # default='warn'
 
 def similarity(x,y):
     X = np.array(x)
