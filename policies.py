@@ -10,10 +10,28 @@ class Policy(object):
         
     def init(self):
         self.rng = np.random.RandomState(self.seed)
+        self.history = []
         
     def get_action(self,context):
         
         raise NotImplementedError("You must implement the get_action method")
+        
+    def get_history(self):
+        return pd.DataFrame(self.history,columns = ["user_id","bike_id","price_proposed","accepted"])
+        
+    def update(self,context,bikes,days,prices,result):
+        
+        user_id = context["user_id"]
+        
+        if result == "INVALID":
+            pass
+        elif result == "REFUSED":
+            rows = []
+            for b,p in zip(bikes,prices):
+                self.history.append([user_id,b,p,0])
+        else: 
+            index = bikes.index(result)
+            self.history.append([user_id,bikes[index],prices[index],1])
         
         
 class RandomPolicy(Policy):

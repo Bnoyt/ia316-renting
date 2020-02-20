@@ -27,6 +27,7 @@ class Tester(object):
                     context = self.env.get_context()
                     b,d,p = policy.get_action(context)
                     result = self.env.act(b,d,p)
+                    policy.update(context,b,d,p,result)
 
                 self.history[policy.__name__].append(self.env.get_history())
                 

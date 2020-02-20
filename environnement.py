@@ -17,6 +17,8 @@ class Environnement(object):
         self.users_per_day = params["users_per_day"]
         self.n_bikes_per_user = params["n_bikes_per_user"]
         
+        self.bike_overlapping = params["bike_overlapping"]
+        
     def init(self,seed):
         
         
@@ -108,6 +110,9 @@ class Environnement(object):
             result = chosen_bike.rent(days_list[indice_chosen],price_list[indice_chosen])
             
             if result:
+                result = chosen_bike.id
+                
+            if self.bike_overlapping:
                 result = chosen_bike.id
 
             
