@@ -76,7 +76,64 @@ class SmarterRandomPolicy(Policy):
         
         return [context["bikes_available"][chosen_index]],[context['bikes_availability'][chosen_index]],[self.params["price"]]
     
+
+class Thomson_SamplingPolicy(Policy):
+    #NB il faut mettre nb_clusters à 2 sinon avec 5 ça me choisissait dans les 5 vélos pour une raison que j'ai pas encore cherché à comprendre
+    """
+    Exemple de policy qui fait un Thomson Sampling
     
+    """
+    
+    def __init__(self,params,seed):
+        self.params = params
+        self.seed = seed
+        self.list_length = self.params["list_length"]
+        self.n_bikes = self.params["n_bikes"]
+        self.init()
+        self.__name__ = f"Thomson_SamplingPolicy_{params['price']}"
+        
+        #initialise une béta distribution correspondant au g des slides du cours
+        # one distribution per bike (arm) per user
+        # a=1 et b=1 par défaut, nb c'est peut etre une mauvaise initialisation 
+        self.prior = [[(1,1) for i in range(self.n_bikes)] for j in range(env_params['n_users'])]
+        
+    def get_action(self,context):
+        
+        df = self.get_history() 
+        df = df[df.user_id == context['user_id']]
+        
+        df_env = env.get_history()
+        df_env= df_env[df_env.user_id == context['user_id']]
+        
+        if df.shape[0]<self.params["n_bikes"]:
+            return [context["bikes_available"][df.shape[0]]],[context['bikes_availability'][df.shape[0]]],[self.params["price"]]
+            return [context["bikes_available"][df.shape[0]]],[context['days_wanted']],[self.params["price"]]
+        
+        if len(df) < 10:
+            a = [len(d) for d in context["bikes_availability"]]
+            chosen_index = self.rng.randint(0,len(a))  
+            return [context["bikes_available"][chosen_index]],[context['bikes_availability'][chosen_index]],[self.params["price"]]
+            return [context["bikes_available"][chosen_index]],[context['days_wanted']],[self.params["price"]]
+
+        # Nombre de fois que chaque vélo a été choisi
+        choices = df.groupby('bike_id').accepted.sum().tolist()
+
+        # Reward cumulé par vélo
+        df_env['bike_proposed']=df_env['bike_proposed'].apply(lambda x : x[0])
+        rwrds=df_env[['bike_proposed','reward']].groupby(['bike_proposed']).sum().reward.tolist()
+        
+        for bike_index in range(self.n_bikes):
+            tmp=self.prior[context['user_id']][bike_index]
+            #pour b je prends la valeur absolue mais c'est bizarre ca devrait rester positif je crois (peut etre que ca reste positif mais que ca tombe à 0, il faut que je regarde)
+            #je rajoute 0.00001 parce que ca tombe a 0 sinon (pareil il faudra que je réfléchisse à cette constante si je la laisse)
+            self.prior[context['user_id']][bike_index]=(tmp[0]+rwrds[bike_index],abs(tmp[1]+1-rwrds[bike_index])+0.000001)
+        
+        samples = [np.random.beta(x[0],x[1]) for x in self.prior[context['user_id']]]
+        chosen_index = np.argmax(samples)
+        
+        return [context["bikes_available"][chosen_index]],[context['bikes_availability'][chosen_index]],[self.params["price"]]
+        return [context["bikes_available"][chosen_index]],[context['days_wanted']],[self.params["price"]]
+
     
 class EGreedyPolicy(Policy):
     """
@@ -130,12 +187,7 @@ class EGreedyPolicy(Policy):
             return [context["bikes_available"][chosen_index]],[context['days_wanted']],[self.params["price"]]
 
             
-            
-            
-            
-            
-            
-            
+ 
             
             
 class UCBPolicy(Policy):
