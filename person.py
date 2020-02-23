@@ -35,7 +35,7 @@ class Person(object):
         
         params = np.array([max(0,rng.normal(s,1)) for s in c])
         
-        price_appetence = rng.uniform(price_expectation)
+        price_appetence = 500#rng.uniform(price_expectation)
         
         
         return cls(params,price_appetence,seed,user_id)
@@ -63,7 +63,7 @@ class Person(object):
         reward = similarity(bike.params,self.params)
        
         
-        reward = reward * self.price_appetence
+        reward = reward * self.price_appetence * np.exp(-1)
         
         reward = reward * np.exp(-abs(len(days) - len(days_wanted)))
         
@@ -80,7 +80,8 @@ class Person(object):
         for (bike,days) in zip(bike_list,days_list):
             rewards.append(self.get_reward(bike,days,days_wanted))
             
-        return np.max(rewards)
+        u = np.argmax(rewards)
+        return np.max(rewards),bike_list[u].id,days_list[u]
         
     def which_bike(self,bike_list,days_list,price_list,days_wanted):
         
@@ -102,11 +103,11 @@ class Person(object):
                 prices.append(price)
                 
         if len(is_chosen) == 0:
-            return None,None
+            return None,None,probas
         else:
             a = self.rng.randint(len(is_chosen))
             
-            return is_chosen[a],prices[a]
+            return is_chosen[a],prices[a],probas
             
             
     

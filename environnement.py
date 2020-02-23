@@ -24,8 +24,8 @@ class Environnement(object):
         
         self.rng = np.random.RandomState(seed)
         
-        price_expectation = self.rng.uniform(2000)
-        
+        #price_expectation = self.rng.uniform(2000)
+        price_expectation=500
         
         self.clusters = [np.array([self.rng.uniform() for i in range(self.dim)]) for j in range(self.n_clusters)]
         
@@ -45,28 +45,33 @@ class Environnement(object):
         
         self.days_wanted = self.get_wanted_days()
         
-        self.history = pd.DataFrame(columns = [
-            "user_id",
-            "days_wanted",
-            "bike_proposed",
-            "price_proposed",
-            "days_proposed",
-            "answer",
-            "reward",
-            "best_reward"
-        ])
+        
+        self.history = {
+            "user_id":[],
+            "days_wanted":[],
+            "bike_proposed":[],
+            "price_proposed":[],
+            "days_proposed":[],
+            "answer":[],
+            "reward":[],
+            "best_reward":[],
+            "probas":[],
+        }
+        
+    
+    
         
         
     def get_wanted_days(self):
         day1 = int(self.rng.exponential(20) + self.t)
         day2 = int(self.rng.exponential(8) + day1)
         
-        days = list(range(day1,day2))
+        days = list(range(day1,1+day2))
         
         return days
     
     def get_history(self):
-        return self.history
+        return pd.DataFrame(self.history)
     
         
     def get_context(self):
@@ -93,12 +98,12 @@ class Environnement(object):
         price_list = price_list[:self.n_bikes_per_user]
         
         
-        indice_chosen,price = self.current_user.which_bike(bike_list,days_list,price_list,self.days_wanted)
+        indice_chosen,price,probas = self.current_user.which_bike(bike_list,days_list,price_list,self.days_wanted)
         
         
         
         context = self.get_context()
-        best_reward = self.current_user.get_best_reward([self.bikes[b] for b in context["bikes_available"]],context["bikes_availability"],self.days_wanted)
+        best_reward,best_bike,best_days = self.current_user.get_best_reward([self.bikes[b] for b in context["bikes_available"]],context["bikes_availability"],self.days_wanted)
         
         
 
@@ -108,6 +113,7 @@ class Environnement(object):
             chosen_bike = bike_list[indice_chosen]
             
             result = chosen_bike.rent(days_list[indice_chosen],price_list[indice_chosen])
+            #result = self.bikes[best_bike].rent(best_days,price_list[0])
             
             if result:
                 result = chosen_bike.id
@@ -125,19 +131,16 @@ class Environnement(object):
             reward = 0
         
             
+        self.history["user_id"].append(self.current_user.id)
+        self.history["days_wanted"].append(self.days_wanted)
+        self.history["bike_proposed"].append(bike_proposed)
+        self.history["price_proposed"].append(price_list)
+        self.history["days_proposed"].append(days_list)
+        self.history["answer"].append(result)
+        self.history["reward"].append(reward)
+        self.history["best_reward"].append(best_reward)
+        self.history["probas"].append(probas)
             
-        history_to_append = pd.DataFrame({
-            "user_id":[self.current_user.id],
-            "days_wanted":[self.days_wanted],
-            "bike_proposed":[bike_proposed],
-            "price_proposed":[price_list],
-            "days_proposed":[days_list],
-            "answer":[result],
-            "reward":[reward],
-            "best_reward":[best_reward]
-        })
-        
-        self.history = pd.concat([self.history,history_to_append])
         
         
         
