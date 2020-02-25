@@ -30,7 +30,7 @@ class Environnement(object):
         self.clusters = [np.array([self.rng.uniform() for i in range(self.dim)]) for j in range(self.n_clusters)]
         
         
-        self.peoples = [Person.randomPerson(s*self.seed,self.dim,self.clusters,s,price_expectation) for s in range(self.n_users)]
+        self.peoples = [Person.randomPerson(hash(s*self.seed),self.dim,self.clusters,s,price_expectation) for s in range(self.n_users)]
         
         
         
@@ -56,6 +56,7 @@ class Environnement(object):
             "reward":[],
             "best_reward":[],
             "probas":[],
+            'best_bike':[],
         }
         
     
@@ -140,6 +141,7 @@ class Environnement(object):
         self.history["reward"].append(reward)
         self.history["best_reward"].append(best_reward)
         self.history["probas"].append(probas)
+        self.history["best_bike"].append(best_bike)
             
         
         
