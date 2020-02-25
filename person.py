@@ -15,6 +15,7 @@ class Person(object):
         self.rng = np.random.RandomState(seed)
         self.id = user_id
         self.price_appetence = price_appetence
+        self.day_appetence = 500
         
         self.alter_params()
 
@@ -50,7 +51,7 @@ class Person(object):
         
         proba = proba * np.exp(-price/self.price_appetence)
         
-        #proba = proba * np.exp(-abs(len(days) - len(days_wanted)))
+        proba = proba * np.exp(-abs(len(days) - len(days_wanted))/self.day_appetence)
         
         
         
@@ -65,7 +66,7 @@ class Person(object):
         
         reward = reward * self.price_appetence * np.exp(-1)
         
-        #reward = reward * np.exp(-abs(len(days) - len(days_wanted)))
+        reward = reward * np.exp(-abs(len(days) - len(days_wanted))/self.day_appetence)
         
         
         

@@ -95,7 +95,7 @@ class Thomson_SamplingPolicy(Policy):
         #initialise une béta distribution correspondant au g des slides du cours
         # one distribution per bike (arm) per user
         # a=1 et b=1 par défaut, nb c'est peut etre une mauvaise initialisation 
-        self.prior = [[(1,1) for i in range(self.n_bikes)] for j in range(env_params['n_users'])]
+        self.prior = [[(1,1) for i in range(self.n_bikes)] for j in range(self.params['n_users'])]
         
     def get_action(self,context):
         
@@ -107,13 +107,13 @@ class Thomson_SamplingPolicy(Policy):
         
         if df.shape[0]<self.params["n_bikes"]:
             return [context["bikes_available"][df.shape[0]]],[context['bikes_availability'][df.shape[0]]],[self.params["price"]]
-            return [context["bikes_available"][df.shape[0]]],[context['days_wanted']],[self.params["price"]]
+            #return [context["bikes_available"][df.shape[0]]],[context['days_wanted']],[self.params["price"]]
         
         if len(df) < 10:
             a = [len(d) for d in context["bikes_availability"]]
             chosen_index = self.rng.randint(0,len(a))  
             return [context["bikes_available"][chosen_index]],[context['bikes_availability'][chosen_index]],[self.params["price"]]
-            return [context["bikes_available"][chosen_index]],[context['days_wanted']],[self.params["price"]]
+            #return [context["bikes_available"][chosen_index]],[context['days_wanted']],[self.params["price"]]
 
         # Nombre de fois que chaque vélo a été choisi
         choices = df.groupby('bike_id').accepted.sum().tolist()
@@ -132,7 +132,7 @@ class Thomson_SamplingPolicy(Policy):
         chosen_index = np.argmax(samples)
         
         return [context["bikes_available"][chosen_index]],[context['bikes_availability'][chosen_index]],[self.params["price"]]
-        return [context["bikes_available"][chosen_index]],[context['days_wanted']],[self.params["price"]]
+        #return [context["bikes_available"][chosen_index]],[context['days_wanted']],[self.params["price"]]
 
     
 class EGreedyPolicy(Policy):
@@ -164,10 +164,9 @@ class EGreedyPolicy(Policy):
         
             a = [len(d) for d in context["bikes_availability"]]
 
-
             chosen_index = self.rng.randint(0,len(a))  
 
-            return [context["bikes_available"][chosen_index]],[context['bikes_availability'][chosen_index]],[self.params["price"]]
+            #return [context["bikes_available"][chosen_index]],[context['bikes_availability'][chosen_index]],[self.params["price"]]
             return [context["bikes_available"][chosen_index]],[context['days_wanted']],[self.params["price"]]
 
         
@@ -178,14 +177,15 @@ class EGreedyPolicy(Policy):
             })
             
             
-            df = df.merge(bikes_ids,on='bike_id').groupby('bike_id').accepted.mean().reset_index().sort_values('accepted',ascending=True)
-            
+            df = df.merge(bikes_ids,on='bike_id').groupby('bike_id').accepted.mean().reset_index().sort_values('accepted',ascending=False)
             
             chosen_index = context["bikes_available"].index(df.bike_id.values[0])
             
             return [context["bikes_available"][chosen_index]],[context['bikes_availability'][chosen_index]],[self.params["price"]]
-            return [context["bikes_available"][chosen_index]],[context['days_wanted']],[self.params["price"]]
+            #return [context["bikes_available"][chosen_index]],[context['days_wanted']],[self.params["price"]]
 
+            
+           
             
  
             
@@ -224,7 +224,7 @@ class UCBPolicy(Policy):
                 a = [len(d) for d in context["bikes_availability"]]
                 chosen_index = self.rng.randint(0,len(a))  
                 return [context["bikes_available"][chosen_index]],[context['bikes_availability'][chosen_index]],[self.params["price"]]
-                return [context["bikes_available"][chosen_index]],[context['days_wanted']],[self.params["price"]]
+                #return [context["bikes_available"][chosen_index]],[context['days_wanted']],[self.params["price"]]
 
             
             else :
@@ -260,9 +260,10 @@ class UCBPolicy(Policy):
                 chosen_index = context["bikes_available"].index(df.bike_id.values[0])
 
                 return [context["bikes_available"][chosen_index]],[context['bikes_availability'][chosen_index]],[self.params["price"]]
-                return [context["bikes_available"][chosen_index]],[context['days_wanted']],[self.params["price"]]
+                #return [context["bikes_available"][chosen_index]],[context['days_wanted']],[self.params["price"]]
 
-            
+
+
 from keras.layers import Embedding, Flatten, Dense, Dropout,Input
 from keras.layers import Dot
 from keras.models import Model
@@ -330,7 +331,7 @@ class DeepPolicy(Policy):
             chosen_index = self.rng.randint(0,len(a))  
 
             return [context["bikes_available"][chosen_index]],[context['bikes_availability'][chosen_index]],[self.params["price"]]
-            return [context["bikes_available"][chosen_index]],[context['days_wanted']],[self.params["price"]]
+            #return [context["bikes_available"][chosen_index]],[context['days_wanted']],[self.params["price"]]
         
         
         else:
@@ -357,7 +358,14 @@ class DeepPolicy(Policy):
             chosen_index = np.argmax(ratings)
             
             return [context["bikes_available"][chosen_index]],[context['bikes_availability'][chosen_index]],[self.params["price"]]
-            return [context["bikes_available"][chosen_index]],[context['days_wanted']],[self.params["price"]]
+            #return [context["bikes_available"][chosen_index]],[context['days_wanted']],[self.params["price"]]
+            
+            
+            
+            
+            
+            
+         
             
             
             
