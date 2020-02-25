@@ -50,7 +50,7 @@ class Person(object):
         
         proba = proba * np.exp(-price/self.price_appetence)
         
-        proba = proba * np.exp(-abs(len(days) - len(days_wanted)))
+        #proba = proba * np.exp(-abs(len(days) - len(days_wanted)))
         
         
         
@@ -65,7 +65,7 @@ class Person(object):
         
         reward = reward * self.price_appetence * np.exp(-1)
         
-        reward = reward * np.exp(-abs(len(days) - len(days_wanted)))
+        #reward = reward * np.exp(-abs(len(days) - len(days_wanted)))
         
         
         

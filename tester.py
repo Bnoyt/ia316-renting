@@ -16,14 +16,14 @@ class Tester(object):
     def run(self):
                 
         for policy in self.policies:
-            print( f"Testing policy |{policy.__name__}|")
         
-            for j in tqdm(range(self.n_rep)):
+            for j in range(self.n_rep):
+                print( f"Testing policy |{policy.__name__}| rep {j}/{self.n_rep}")
 
                 self.env.init(j)
                 policy.init()
 
-                for i in range(self.n_steps):
+                for i in tqdm(range(self.n_steps)):
                     context = self.env.get_context()
                     b,d,p = policy.get_action(context)
                     result = self.env.act(b,d,p)
