@@ -18,7 +18,7 @@ class Tester(object):
         for policy in self.policies:
         
             for j in range(self.n_rep):
-                print( f"Testing policy |{policy.__name__}| rep {j}/{self.n_rep}")
+                print( f"Testing policy |{policy.__name__}| rep {j+1}/{self.n_rep}")
 
                 self.env.init(j)
                 policy.init()
