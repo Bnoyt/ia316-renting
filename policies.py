@@ -134,7 +134,7 @@ class Thomson_SamplingPolicy(Policy):
     
 class EGreedyPolicy(Policy):
     """
-    Example de policy qui fait un epsilon greedy (mais qui marche pas trop trop)
+    Example de policy qui fait un epsilon greedy
     
     """
     
@@ -268,8 +268,9 @@ from keras.models import Model
 
 class DeepPolicy(Policy):
     """
-    Example de policy qui fait un epsilon greedy (mais qui marche pas trop trop)
-    
+
+    Dumb deep learning policy
+
     """
     
     
@@ -358,104 +359,13 @@ class DeepPolicy(Policy):
             #return [context["bikes_available"][chosen_index]],[context['days_wanted']],[self.params["price"]]
             
             
-            
-class DeepPolicy(Policy):
-    """
-    Example de policy qui fait un epsilon greedy (mais qui marche pas trop trop)
-    
-    """
-    
-    
-    def __init__(self,params,seed):
-        self.params = params
-        self.seed = seed
-        self.list_length = self.params["list_length"]
-        self.n_bikes = self.params["n_bikes"]
-        self.init()
-        self.eps = self.params["eps"]
-        self.__name__ = f"DeepPolicy_{params['price']}"
-        
-        
-    def init(self):
-        self.rng = np.random.RandomState(self.seed)
-        self.history = []
-        
-        
-        user_inputs = Input(shape=(1,))
-        bike_inputs = Input(shape=(1,))
-        
-        user_embedding = Embedding(output_dim=self.params["embedding_size"],
-                                        input_dim=self.params["n_users"],
-                                        input_length=1,
-                                        name='user_embedding')
-        bike_embedding = Embedding(output_dim=self.params["embedding_size"],
-                                        input_dim=self.params["n_bikes"],
-                                        input_length=1,
-                                        name='bike_embedding')
-        
-        user_vecs = Flatten()(user_embedding(user_inputs))
-        bike_vecs = Flatten()(bike_embedding(bike_inputs))
-        
-        final_layer = Dot(axes=1)([user_vecs, bike_vecs])
-        
-        
-        self.model = Model(inputs=[user_inputs,bike_inputs],outputs=[final_layer])
-        
-        
-        self.model.compile(optimizer="adam", loss='mae') 
-        
 
-            
-        
-    def get_action(self,context):
-        
-        df = self.get_history() # La méthode pour récupérer l'historique
-        
-        df = df[df.user_id == context['user_id']]
-        
-        if len(df) < 100:
-        
-            a = [len(d) for d in context["bikes_availability"]]
-
-
-            chosen_index = self.rng.randint(0,len(a))  
-
-            return [context["bikes_available"][chosen_index]],[context['bikes_availability'][chosen_index]],[self.params["price"]]
-            #return [context["bikes_available"][chosen_index]],[context['days_wanted']],[self.params["price"]]
-        
-        
-        else:
-            
-            X1,X2 =   df[["user_id","bike_id"]].values[:,0],df[["user_id","bike_id"]].values[:,1]
-            y = df["accepted"].values
-            
-            
-            
-            
-            self.model.fit([X1,X2],y,verbose=0)
-            
-            
-            X1,X2 = [context["user_id"] for v in context["bikes_available"]], [v for v in context["bikes_available"]]
-            
-            
-            ratings = self.model.predict([X1,X2])
-            
-            correction =    [    np.exp(-abs(len(days) - len(context['days_wanted']))) for days in context['bikes_availability']]
-            
-        
-            ratings = [x*y for (x,y) in zip(ratings,correction)]
-            
-            chosen_index = np.argmax(ratings)
-            
-            return [context["bikes_available"][chosen_index]],[context['bikes_availability'][chosen_index]],[self.params["price"]]
-            #return [context["bikes_available"][chosen_index]],[context['days_wanted']],[self.params["price"]]
             
             
             
 class DeepPolicyMemory(Policy):
     """
-    Example de policy qui fait un epsilon greedy (mais qui marche pas trop trop)
-    
+        Deep learning policy with memory
     """
     
     

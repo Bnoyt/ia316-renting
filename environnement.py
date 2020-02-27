@@ -22,7 +22,7 @@ class Environnement(object):
     def init(self,seed):
         
         
-        self.rng = np.random.RandomState(seed)
+        self.rng = np.random.RandomState(hash(seed*self.seed))
         
         #price_expectation = self.rng.uniform(2000)
         price_expectation=500
@@ -30,7 +30,7 @@ class Environnement(object):
         self.clusters = [np.array([self.rng.uniform() for i in range(self.dim)]) for j in range(self.n_clusters)]
         
         
-        self.peoples = [Person.randomPerson(hash(s*self.seed),self.dim,self.clusters,s,price_expectation) for s in range(self.n_users)]
+        self.peoples = [Person.randomPerson(hash(s*seed),self.dim,self.clusters,s,price_expectation) for s in range(self.n_users)]
         
         
         
@@ -64,10 +64,10 @@ class Environnement(object):
         
         
     def get_wanted_days(self):
-        day1 = int(self.rng.exponential(20) + self.t)
-        day2 = int(self.rng.exponential(8) + day1)
+        day1 = int(self.rng.exponential(10) + self.t)
+        day2 = int(self.rng.exponential(5) + 1 + day1)
         
-        days = list(range(day1,1+day2))
+        days = list(range(day1,day2))
         
         return days
     
