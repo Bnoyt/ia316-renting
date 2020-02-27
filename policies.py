@@ -163,8 +163,7 @@ class EGreedyPolicy(Policy):
 
             chosen_index = self.rng.randint(0,len(a))  
 
-            #return [context["bikes_available"][chosen_index]],[context['bikes_availability'][chosen_index]],[self.params["price"]]
-            return [context["bikes_available"][chosen_index]],[context['days_wanted']],[self.params["price"]]
+            return [context["bikes_available"][chosen_index]],[context['bikes_availability'][chosen_index]],[self.params["price"]]
 
         
         
